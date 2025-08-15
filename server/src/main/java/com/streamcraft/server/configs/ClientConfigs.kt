@@ -1,24 +1,24 @@
 package com.streamcraft.server.configs
 
-object ClientConfigs {
-    private const val CLIENT_ID_KEY = "CLIENT_ID_KEY"
-    private const val CLIENT_SECRET_KEY = "CLIENT_SECRET_KEY"
-    private const val CLIENT_HOST_KEY = "CLIENT_HOST_KEY"
-    private const val CLIENT_SCHEME_KEY = "CLIENT_SCHEME_KEY"
-    private const val CLIENT_REDIRECT_URI_KEY = "CLIENT_REDIRECT_URI_KEY"
+sealed class ClientConfigs {
+    private val CLIENT_ID_KEY = "CLIENT_ID_KEY"
+    private val CLIENT_SECRET_KEY = "CLIENT_SECRET_KEY"
 
-    val clientId: String        // client_id from google console
-        get() = System.getenv(CLIENT_ID_KEY)
+    /** client_id from google or twitch console */
+    val clientId: String
+        get() = System.getenv("${keyPrefix}_$CLIENT_ID_KEY")
 
-    val clientSecret: String    // client_secret from google console
-        get() = System.getenv(CLIENT_SECRET_KEY)
+    /** client_secret from google or twitch console */
+    val clientSecret: String
+        get() = System.getenv("${keyPrefix}_$CLIENT_SECRET_KEY")
 
-    val clientHost: String      // hostname.com
-        get() = System.getenv(CLIENT_HOST_KEY)
+    protected abstract val keyPrefix: String
 
-    val clientScheme: String    // https
-        get() = System.getenv(CLIENT_SCHEME_KEY)
+    object Youtube : ClientConfigs() {
+        override val keyPrefix = "YOUTUBE"
+    }
 
-    val clientRedirectUri: String    // https
-        get() = System.getenv(CLIENT_REDIRECT_URI_KEY)
+    object Twitch : ClientConfigs() {
+        override val keyPrefix = "TWITCH"
+    }
 }
